@@ -72,34 +72,34 @@ namespace LibraryWebServer.Controllers
         [HttpPost]
         public ActionResult AllTitles()
         {
-          if (card != -1)
-          {
-            using (Team53LibraryContext db = new Team53LibraryContext())
+            if (card != -1)
             {
-              var query = from t in db.Titles
-                          join i in db.Inventory 
-                          on t.Isbn equals i.Isbn into joinInv
-                          from ti in joinInv.DefaultIfEmpty()
-                          join c in db.CheckedOut
-                          on ti.Serial equals c.Serial into joinCheckedOut
-                          from ico in joinCheckedOut.DefaultIfEmpty()
-                          join p in db.Patrons
-                          on ico.CardNum equals p.CardNum into joinPatrons
-                          from item in joinPatrons.DefaultIfEmpty()
-                          select new
-                          {
-                            isbn    = t.Isbn,
-                            title   = t.Title,
-                            author  = t.Author,
-                            serial  = ti == null ? (uint?)null : ti.Serial,
-                            name    = item == null ? "" : item.Name,
-                          };
+                using (Team53LibraryContext db = new Team53LibraryContext())
+                {
+                    var query = from t in db.Titles
+                                join i in db.Inventory 
+                                on t.Isbn equals i.Isbn into joinInv
+                                from ti in joinInv.DefaultIfEmpty()
+                                join c in db.CheckedOut
+                                on ti.Serial equals c.Serial into joinCheckedOut
+                                from ico in joinCheckedOut.DefaultIfEmpty()
+                                join p in db.Patrons
+                                on ico.CardNum equals p.CardNum into joinPatrons
+                                from item in joinPatrons.DefaultIfEmpty()
+                                select new
+                                {
+                                  isbn    = t.Isbn,
+                                  title   = t.Title,
+                                  author  = t.Author,
+                                  serial  = ti == null ? null : (uint?)ti.Serial,
+                                  name    = item == null ? "" : item.Name,
+                                };
 
-                return Json( query.ToArray() );
+                    return Json( query.ToArray() );
+                }
             }
-          }
 
-          return Json( new { success = false } );
+            return Json( new { success = false } );
     }
 
         /// <summary>
