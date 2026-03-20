@@ -139,18 +139,15 @@ namespace LibraryWebServer.Controllers
             {
                 return Json( new { success = false } );
             }
-            // You may have to cast serial to a (uint)
             using (Team53LibraryContext db = new Team53LibraryContext())
             {
                 var record = (from c in db.CheckedOut
                     where c.CardNum == card && c.Serial == serial
                     select c).FirstOrDefault();
 
-                if (record != null)
-                {
-                    db.CheckedOut.Remove(record);
-                    db.SaveChanges();
-                }
+                if (record == null) return Json(new { success = true });
+                db.CheckedOut.Remove(record);
+                db.SaveChanges();
             }
             return Json( new { success = true } );
         }
