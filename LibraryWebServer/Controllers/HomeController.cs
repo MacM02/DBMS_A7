@@ -18,6 +18,8 @@ namespace LibraryWebServer.Controllers
 
         private readonly ILogger<HomeController> _logger;
 
+        private Team53LibraryContext db;
+
 
         /// <summary>
         /// Given a Patron name and CardNum, verify that they exist and match in the database.
@@ -171,6 +173,15 @@ namespace LibraryWebServer.Controllers
         public HomeController( ILogger<HomeController> logger )
         {
             _logger = logger;
+            try
+            {
+                db = new Team53LibraryContext();
+
+            }
+            catch
+            {
+                // exit with error maybe?
+            }
         }
 
         public IActionResult Privacy()
