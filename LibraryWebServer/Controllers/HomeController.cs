@@ -176,11 +176,10 @@ namespace LibraryWebServer.Controllers
             try
             {
                 db = new Team53LibraryContext();
-
             }
-            catch
+            catch (Exception e)
             {
-                // exit with error maybe?
+                System.Diagnostics.Debug.WriteLine("Failed to create library db context: " + e.ToString());
             }
         }
 
