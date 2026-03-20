@@ -142,10 +142,13 @@ namespace LibraryWebServer.Controllers
             // You may have to cast serial to a (uint)
             using (Team53LibraryContext db = new Team53LibraryContext())
             {
-                var query = from c in db.CheckedOut where c.CardNum == card && c.Serial == serial select c;
-                if (query.Any())
+                var record = (from c in db.CheckedOut
+                    where c.CardNum == card && c.Serial == serial
+                    select c).FirstOrDefault();
+
+                if (record != null)
                 {
-                    db.CheckedOut.Remove(query.First());
+                    db.CheckedOut.Remove(record);
                     db.SaveChanges();
                 }
             }
