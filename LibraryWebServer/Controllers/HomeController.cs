@@ -35,7 +35,7 @@ namespace LibraryWebServer.Controllers
         {
 
 
-            var query = from p in db.Patrons where p.CardNum == cardnum select new { p.Name, p.CardNum };
+            var query = from p in db.Patrons where p.CardNum == cardnum && p.Name.Equals(name) select new { p.Name, p.CardNum };
             if (query.Any())
             {
                 user = name;
