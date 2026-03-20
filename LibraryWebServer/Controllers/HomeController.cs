@@ -101,6 +101,7 @@ namespace LibraryWebServer.Controllers
                     join checkout in db.CheckedOut on p.CardNum equals checkout.CardNum
                     join item in db.Inventory on checkout.Serial equals item.Serial
                     join title in db.Titles on item.Isbn equals title.Isbn
+                    where p.CardNum == card
                     select new { title = title.Title, author = title.Author, serial = checkout.Serial};
                 return Json( query.ToArray() );
             }
