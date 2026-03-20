@@ -32,7 +32,7 @@ namespace LibraryWebServer.Controllers
         {
             using (Team53LibraryContext db = new Team53LibraryContext())
             {
-                var query = from p in db.Patrons where p.CardNum == cardnum && p.Name.Equals(name) select new { p.Name, p.CardNum };
+                var query = from p in db.Patrons where p.CardNum == cardnum && p.Name == name select new { p.Name, p.CardNum };
                 if (query.Any())
                 {
                     user = name;
@@ -93,9 +93,17 @@ namespace LibraryWebServer.Controllers
             if (card == -1)
             {
                 return Json( new { success = false } );
-            } 
-            
-            return Json( null );
+            }
+
+            using (Team53LibraryContext db = new Team53LibraryContext())
+            {
+                var query = from p in db.Patrons
+                    join checkout in db.CheckedOut on p.CardNum equals checkout.CardNum
+                    join item in db.Inventory on checkout.Serial equals item.Serial
+                    join title in db.Titles on item.Isbn equals title.Isbn
+                    select new { title = title.Title, author = title.Author, serial = checkout.Serial};
+                return Json( query.ToArray() );
+            }
         }
 
 
