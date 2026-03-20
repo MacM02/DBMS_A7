@@ -33,18 +33,18 @@ namespace LibraryWebServer.Controllers
         [HttpPost]
         public IActionResult CheckLogin( string name, int cardnum )
         {
-            // TODO: Fill in. Determine if login is successful or not.
-            bool loginSuccessful = false;
 
-            if ( !loginSuccessful )
-            {
-                return Json( new { success = false } );
-            }
-            else
+
+            var query = from p in db.Patrons where p.CardNum == cardnum select new { p.Name, p.CardNum };
+            if (query.Any())
             {
                 user = name;
                 card = cardnum;
                 return Json( new { success = true } );
+            }
+            else
+            {
+                return Json( new { success = false } );
             }
         }
 
