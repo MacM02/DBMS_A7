@@ -18,9 +18,6 @@ namespace LibraryWebServer.Controllers
 
         private readonly ILogger<HomeController> _logger;
 
-        private Team53LibraryContext db;
-
-
         /// <summary>
         /// Given a Patron name and CardNum, verify that they exist and match in the database.
         /// If the login is successful, sets the global variables "user" and "card"
@@ -33,18 +30,19 @@ namespace LibraryWebServer.Controllers
         [HttpPost]
         public IActionResult CheckLogin( string name, int cardnum )
         {
-
-
-            var query = from p in db.Patrons where p.CardNum == cardnum && p.Name.Equals(name) select new { p.Name, p.CardNum };
-            if (query.Any())
+            using (Team53LibraryContext db = new Team53LibraryContext())
             {
-                user = name;
-                card = cardnum;
-                return Json( new { success = true } );
-            }
-            else
-            {
-                return Json( new { success = false } );
+                var query = from p in db.Patrons where p.CardNum == cardnum && p.Name.Equals(name) select new { p.Name, p.CardNum };
+                if (query.Any())
+                {
+                    user = name;
+                    card = cardnum;
+                    return Json( new { success = true } );
+                }
+                else
+                {
+                    return Json( new { success = false } );
+                }   
             }
         }
 
@@ -92,7 +90,11 @@ namespace LibraryWebServer.Controllers
         [HttpPost]
         public ActionResult ListMyBooks()
         {
-            // TODO: Implement
+            if (card == -1)
+            {
+                return Json( new { success = false } );
+            } 
+            
             return Json( null );
         }
 
@@ -173,14 +175,6 @@ namespace LibraryWebServer.Controllers
         public HomeController( ILogger<HomeController> logger )
         {
             _logger = logger;
-            try
-            {
-                db = new Team53LibraryContext();
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine("Failed to create library db context: " + e.ToString());
-            }
         }
 
         public IActionResult Privacy()
