@@ -135,8 +135,20 @@ namespace LibraryWebServer.Controllers
         [HttpPost]
         public ActionResult ReturnBook( int serial )
         {
+            if (card == -1)
+            {
+                return Json( new { success = false } );
+            }
             // You may have to cast serial to a (uint)
-
+            using (Team53LibraryContext db = new Team53LibraryContext())
+            {
+                var query = from c in db.CheckedOut where c.CardNum == card && c.Serial == serial select c;
+                if (query.Any())
+                {
+                    db.CheckedOut.Remove(query.First());
+                    db.SaveChanges();
+                }
+            }
             return Json( new { success = true } );
         }
 
